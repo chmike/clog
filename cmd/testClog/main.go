@@ -1,6 +1,18 @@
 package main
 
-import "github.com/chmike/clog"
+import (
+	"encoding/json"
+
+	"github.com/chmike/clog"
+)
+
+type test struct {
+	LogLevel clog.Level `json:"logLevel"`
+}
+
+var v = test{
+	LogLevel: clog.Debug2Level,
+}
 
 func main() {
 	clog.SetLevel(clog.Debug2Level)
@@ -12,6 +24,16 @@ func main() {
 	clog.Warning("this is a warning")
 	clog.Error("this is an error")
 	clog.Println("multiline\nmessage")
+
+	clog.Info("test json encoding")
+	b, _ := json.MarshalIndent(v, "", "  ")
+	clog.Println(string(b))
+
+	var v2 test
+	json.Unmarshal(b, &v2)
+	if v != v2 {
+		clog.Fatal("mismatch")
+	}
 
 	c := clog.New("clog_test", clog.Debug2Level)
 	c.Infoln("starting...", 10)

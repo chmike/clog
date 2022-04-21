@@ -1,6 +1,7 @@
 package clog
 
 import (
+	"encoding/json"
 	"runtime"
 	"strconv"
 	"strings"
@@ -123,4 +124,62 @@ func (c *Clog) log(l Level, depth int, msg string) {
 	buf.WriteString(msg)
 	buf.WriteByte('\n')
 	activeHandler.output(buf.String())
+}
+
+func (l Level) String() string {
+	switch l {
+	case FatalLevel:
+		return "fatal"
+	case ErrorLevel:
+		return "error"
+	case WarningLevel:
+		return "warning"
+	case InfoLevel:
+		return "info"
+	case PrintLevel:
+		return "print"
+	case DebugLevel:
+		return "debug"
+	case Debug1Level:
+		return "debug1"
+	case Debug2Level:
+		return "debug2"
+	default:
+		return "unknown"
+	}
+}
+
+// LevelFromString returns the level corresponding to s, or PrintLevel by default.
+// It is case insensitive.
+func LevelFromString(s string) Level {
+	switch strings.ToLower(s) {
+	case "fatal":
+		return FatalLevel
+	case "error":
+		return ErrorLevel
+	case "warning":
+		return WarningLevel
+	case "info":
+		return InfoLevel
+	case "debug":
+		return DebugLevel
+	case "debug1":
+		return Debug1Level
+	case "debug2":
+		return Debug2Level
+	default:
+		return PrintLevel
+	}
+}
+
+func (l *Level) UnmarshalJSON(data []byte) (err error) {
+	var s string
+	if err = json.Unmarshal(data, &s); err == nil {
+		*l = LevelFromString(s)
+	}
+	return
+}
+
+func (l Level) MarshalJSON() ([]byte, error) {
+	return json.Marshal(l.String())
 }
