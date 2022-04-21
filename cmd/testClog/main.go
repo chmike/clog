@@ -44,6 +44,7 @@ func main() {
 	c.Println("multiline\nmessage")
 	c.Warning("this is a warning")
 	c.Error("this is an error")
+	c.New("test").Println("create a sub tagged logger")
 	c.Fatal("this is a fatal error")
 
 	c.Info("unprinted message")

@@ -41,13 +41,25 @@ func SetLevel(l Level) {
 }
 
 // New return a logger with a distinct tag and level.
-func New(tag string, level Level) *Clog {
-	return &Clog{tag: tag, level: level}
+func New(tag string, level Level) Clog {
+	if tag == "" {
+		tag = "log"
+	}
+	return Clog{tag: tag, level: level}
 }
 
 // SetLevel sets the filtering level
 func (c *Clog) SetLevel(l Level) {
 	atomic.StoreUint32((*uint32)(&c.level), uint32(l))
+}
+
+// New return a new clog instance, inheriting the level and appending the
+// tag name into "a.b".
+func (c Clog) New(tag string) Clog {
+	if tag == "" {
+		tag = "log"
+	}
+	return Clog{tag: c.tag + "." + tag, level: c.level}
 }
 
 const levelChar = "FEWI .-="
