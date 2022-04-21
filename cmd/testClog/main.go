@@ -41,7 +41,7 @@ func main() {
 	c.Debug("this is a debug message")
 	c.Debug1("this is a debug1 message")
 	c.Debug2("this is a debug2 message")
-	c.Println("multiline\nmessage")
+	c.Infoln("multiline\nmessage")
 	c.Warning("this is a warning")
 	c.Error("this is an error")
 	c.New("test").Println("create a sub tagged logger")

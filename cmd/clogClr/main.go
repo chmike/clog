@@ -54,6 +54,7 @@ func main() {
 		}
 	}
 	s := bufio.NewScanner(f)
+	var clr, prevClr string
 	for s.Scan() {
 		line := s.Text()
 		if len(line) == 0 {
@@ -62,19 +63,27 @@ func main() {
 		}
 		switch line[0] {
 		case 'F':
-			fmt.Print(BgRed, FgBlack, line, Reset, "\n")
+			clr = BgRed + FgBlack
 		case 'E':
-			fmt.Print(Bright, FgRed, line, Reset, "\n")
+			clr = Bright + FgRed
 		case 'W':
-			fmt.Print(FgYellow, line, Reset, "\n")
+			clr = FgYellow
 		case 'I':
-			fmt.Print(Bright, FgGreen, line, Reset, "\n")
-		case ' ':
-			fmt.Print(FgWhite, line, Reset, "\n")
+			clr = Bright + FgGreen
 		case '.', '-', '=':
-			fmt.Print(Dim, FgWhite, line, Reset, "\n")
+			clr = Dim + FgWhite
 		default:
-			fmt.Println(line)
+			if len(line) > 1 && line[1] == ' ' {
+				clr = prevClr
+			} else {
+				clr = ""
+			}
 		}
+		if clr == "" {
+			fmt.Println(line)
+		} else {
+			fmt.Print(clr, line, Reset, "\n")
+		}
+		prevClr = clr
 	}
 }
