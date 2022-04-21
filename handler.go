@@ -29,6 +29,14 @@ func (s stdOutHandler) close() {
 // activeHandler managing output of messages.
 var activeHandler handler = stdOutHandler{}
 
+// Options are the logging options.
+type Options struct {
+	Prefix   string `json:"prefix"`
+	MaxLen   int    `json:"maxLen"`
+	MaxFiles int    `json:"maxFiles"`
+	Level    Level  `json:"level"`
+}
+
 type fileHandler struct {
 	mtx      sync.Mutex
 	prefix   string   // file name prefix
@@ -97,14 +105,21 @@ func (f *fileHandler) output(msg string) {
 
 // SetFileOutput sets the output to files with the given prefix and maximum byte length.
 // Erase oldest file when maxFiles is reached.
-func SetFileOutput(prefix string, maxLen, maxFiles int) {
-	if maxLen < 1024 {
-		maxLen = 1024
+func SetFileOutput(opt Options) {
+	if opt.MaxFiles < 2 {
+		opt.MaxFiles = 0
 	}
+	if opt.MaxLen < 1024 {
+		opt.MaxLen = 1024
+	}
+	if opt.Prefix == "" {
+		opt.Prefix = "clog"
+	}
+	mainLog.level = opt.Level
 	activeHandler.close()
 	activeHandler = &fileHandler{
-		prefix:   prefix,
-		maxLen:   maxLen,
-		maxFiles: maxFiles,
+		prefix:   opt.Prefix,
+		maxLen:   opt.MaxLen,
+		maxFiles: opt.MaxFiles,
 	}
 }
