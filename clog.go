@@ -10,23 +10,23 @@ import (
 	"time"
 )
 
-type Level uint32
+type LevelType uint32
 
 const (
-	FatalLevel   Level = iota // Terminate program.
-	ErrorLevel                // Error requiring intervention.
-	WarningLevel              // Self corrected error.
-	InfoLevel                 // Major progress notification.
-	PrintLevel                // Progress notification.
-	DebugLevel                // Debug message with minimum verbosity.
-	Debug1Level               // Debug message with intermediate verbosity.
-	Debug2Level               // Debug message with maximum verbosity.
+	FatalLevel   LevelType = iota // Terminate program.
+	ErrorLevel                    // Error requiring intervention.
+	WarningLevel                  // Self corrected error.
+	InfoLevel                     // Major progress notification.
+	PrintLevel                    // Progress notification.
+	DebugLevel                    // Debug message with minimum verbosity.
+	Debug1Level                   // Debug message with intermediate verbosity.
+	Debug2Level                   // Debug message with maximum verbosity.
 )
 
 // Clog manages logging with a specific level and tag name.
 type Clog struct {
-	level Level  // Filtering level: smaller or equal levels are published.
-	tag   string // Tag identifying component.
+	level LevelType // Filtering level: smaller or equal levels are published.
+	tag   string    // Tag identifying component.
 }
 
 // mainLog is default main logging.
@@ -36,21 +36,31 @@ var mainLog = Clog{
 }
 
 // SetLevel sets the main level.
-func SetLevel(l Level) {
+func SetLevel(l LevelType) {
 	mainLog.SetLevel(l)
 }
 
+// Level returns the main log level.
+func Level() LevelType {
+	return mainLog.level
+}
+
 // New return a logger with a distinct tag and level.
-func New(tag string, level Level) Clog {
+func New(tag string, level LevelType) Clog {
 	if tag == "" {
 		tag = "log"
 	}
 	return Clog{tag: tag, level: level}
 }
 
-// SetLevel sets the filtering level
-func (c *Clog) SetLevel(l Level) {
+// SetLevel sets the filtering level.
+func (c *Clog) SetLevel(l LevelType) {
 	atomic.StoreUint32((*uint32)(&c.level), uint32(l))
+}
+
+// Level returns the level.
+func (c *Clog) Level() LevelType {
+	return c.level
 }
 
 // New return a new clog instance, inheriting the level and appending the
@@ -72,7 +82,7 @@ var bufPool = sync.Pool{
 }
 
 // log generates and outputs the message.
-func (c *Clog) log(l Level, depth int, msg string) {
+func (c *Clog) log(l LevelType, depth int, msg string) {
 	if l > c.level {
 		return
 	}
@@ -138,7 +148,7 @@ func (c *Clog) log(l Level, depth int, msg string) {
 	activeHandler.output(buf.String())
 }
 
-func (l Level) String() string {
+func (l LevelType) String() string {
 	switch l {
 	case FatalLevel:
 		return "fatal"
@@ -163,7 +173,7 @@ func (l Level) String() string {
 
 // LevelFromString returns the level corresponding to s, or PrintLevel by default.
 // It is case insensitive.
-func LevelFromString(s string) Level {
+func LevelFromString(s string) LevelType {
 	switch strings.ToLower(s) {
 	case "fatal":
 		return FatalLevel
@@ -184,7 +194,7 @@ func LevelFromString(s string) Level {
 	}
 }
 
-func (l *Level) UnmarshalJSON(data []byte) (err error) {
+func (l *LevelType) UnmarshalJSON(data []byte) (err error) {
 	var s string
 	if err = json.Unmarshal(data, &s); err == nil {
 		*l = LevelFromString(s)
@@ -192,6 +202,6 @@ func (l *Level) UnmarshalJSON(data []byte) (err error) {
 	return
 }
 
-func (l Level) MarshalJSON() ([]byte, error) {
+func (l LevelType) MarshalJSON() ([]byte, error) {
 	return json.Marshal(l.String())
 }

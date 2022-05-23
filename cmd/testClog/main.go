@@ -7,7 +7,7 @@ import (
 )
 
 type test struct {
-	LogLevel clog.Level `json:"logLevel"`
+	LogLevel clog.LevelType `json:"logLevel"`
 }
 
 var v = test{

@@ -31,10 +31,10 @@ var activeHandler handler = stdOutHandler{}
 
 // Options are the logging options.
 type Options struct {
-	Prefix   string `json:"prefix"`
-	MaxLen   int    `json:"maxLen"`
-	MaxFiles int    `json:"maxFiles"`
-	Level    Level  `json:"level"`
+	Prefix   string    `json:"prefix"`
+	MaxLen   int       `json:"maxLen"`
+	MaxFiles int       `json:"maxFiles"`
+	Level    LevelType `json:"level"`
 }
 
 type fileHandler struct {
