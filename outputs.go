@@ -272,7 +272,7 @@ func (c Clog) Infof(format string, args ...interface{}) {
 // Print logs a normal progress notification.
 func (c Clog) Print(args ...interface{}) {
 	if c.level >= PrintLevel {
-		c.log(InfoLevel, 0, fmt.Sprint(args...))
+		c.log(PrintLevel, 0, fmt.Sprint(args...))
 	}
 }
 
