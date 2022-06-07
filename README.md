@@ -18,8 +18,8 @@ This installs the package and the commands `clogClr` and `testClog`.
 
 ## Usage
 
-The command `testClog` generates various logging messages output to stdout. The first 
-character of a line specifies the log level.
+The command `testClog` outputs various logging messages to stdout. The first 
+character of a log line specifies the log level.
 
  - F : Fatal error message causing the program to stop.
  - E : Error message requiring human intervention to fix the problem.
@@ -35,6 +35,6 @@ will read logging messages from stdin. It will then colorize lines according to 
 logging level. Executing the command `testClog | clogClr` will demonstrate its 
 effect. 
 
-I handy usage pattern when logging messages are written to files is to use the command
+A handy usage pattern when logging messages are written to files is to use the command
 `tail -F log_latest | clogClr`. Where `log_latest` is the link file to the latest 
 log file created by the clog package. 
